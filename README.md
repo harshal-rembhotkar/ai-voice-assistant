@@ -29,7 +29,7 @@ This project demonstrates how to bridge traditional PSTN telephony with state-of
 ### 1. Local Setup
 Clone the repository and install the dependencies:
 ```bash
-git clone [https://github.com/harshal-rembhotkar/ai-voice-assistant.git](https://github.com/harshal-rembhotkar/ai-voice-assistant.git)
+git clone https://github.com/harshal-rembhotkar/ai-voice-assistant.git
 cd ai-voice-assistant
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
