@@ -31,8 +31,7 @@ if not all([TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, GEMINI_API_KEY]):
     exit(1)
 
 twilio_client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
-# Standardizing the client connection
-genai_client = genai.Client(api_key=GEMINI_API_KEY, http_options={'api_version': 'v1alpha'})
+genai_client = genai.Client(api_key=GEMINI_API_KEY)
 
 app = FastAPI(title="Twilio-Gemini Voice Assistant")
 
@@ -97,8 +96,7 @@ async def handle_media_stream(websocket: WebSocket):
     )
 
     try:
-        # FIXED: Changed model from "gemini-2.0-flash-exp" to the stable "gemini-2.0-flash"
-        async with genai_client.aio.live.connect(model="gemini-2.0-flash", config=config) as session:
+        async with genai_client.aio.live.connect(model="gemini-2.5-flash-native-audio-preview-12-2025", config=config) as session:
             call_sid = None
             stream_sid = None
 
@@ -115,7 +113,10 @@ async def handle_media_stream(websocket: WebSocket):
                         
                         elif event == "media":
                             audio_bytes = base64.b64decode(data['media']['payload'])
-                            await session.send_realtime_input([{"mime_type": "audio/pcm;rate=8000", "data": audio_bytes}])
+                            # FIXED: Properly passing the Blob object as a keyword argument
+                            await session.send_realtime_input(
+                                media=types.Blob(data=audio_bytes, mime_type="audio/pcm;rate=8000")
+                            )
                             
                         elif event == "stop":
                             break
